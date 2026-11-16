@@ -3,11 +3,10 @@ package com.back.domain.postComment.service;
 import com.back.domain.post.service.PostService;
 import com.back.domain.postComment.entity.PostComment;
 import com.back.domain.postComment.repository.PostCommentRepository;
+import com.back.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,14 +33,14 @@ public class PostCommentService {
 
     /**
      * postId 번 글에 소속된 id 번 댓글.
-     * 댓글이 없거나, 있더라도 다른 글의 댓글이면 404 로 응답한다.
+     * 댓글이 없거나, 있더라도 다른 글의 댓글이면 404 로 응답한다. (resultCode "404-2")
      */
     public PostComment getComment(int postId, int id) {
         postService.getPost(postId);
 
         return postCommentRepository.findByPostIdAndId(postId, id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
+                .orElseThrow(() -> new ServiceException(
+                        "404-2",
                         "%d번 글에 %d번 댓글은 존재하지 않습니다.".formatted(postId, id)
                 ));
     }

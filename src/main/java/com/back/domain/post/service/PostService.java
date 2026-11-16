@@ -2,11 +2,10 @@ package com.back.domain.post.service;
 
 import com.back.domain.post.entity.Post;
 import com.back.domain.post.repository.PostRepository;
+import com.back.global.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,13 +35,14 @@ public class PostService {
     }
 
     /**
-     * 글 하나를 가져온다. 없으면 404 Not Found 로 응답하도록 예외를 던진다.
+     * 글 하나를 가져온다. 없으면 ServiceException("404-1") 을 던진다.
+     * → GlobalExceptionHandler 가 HTTP 404 + RsData JSON 으로 바꿔서 응답한다.
      * (findById 는 Optional 을 돌려준다. 값이 없을 때 .get() 을 그냥 호출하면 NoSuchElementException → 500 에러가 된다.)
      */
     public Post getPost(int id) {
         return postRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
+                .orElseThrow(() -> new ServiceException(
+                        "404-1",
                         "%d번 글은 존재하지 않습니다.".formatted(id)
                 ));
     }
