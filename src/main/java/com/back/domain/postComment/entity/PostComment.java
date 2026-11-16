@@ -2,7 +2,6 @@ package com.back.domain.postComment.entity;
 
 import com.back.domain.post.entity.Post;
 import com.back.global.jpa.entity.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -25,12 +24,12 @@ public class PostComment extends BaseEntity {
      * <ul>
      *   <li>연관관계의 주인 : 외래키(post_id)를 실제로 관리하는 쪽이다.</li>
      *   <li>fetch = LAZY : 댓글을 조회할 때 글은 실제로 필요할 때까지 조회하지 않는다.</li>
-     *   <li>@JsonIgnore : 엔티티를 그대로 JSON으로 바꿀 때 Post → comments → post → comments ... 무한 반복(순환참조)을 막는다.</li>
      * </ul>
+     * 예전에는 엔티티를 직접 JSON 으로 응답해서 순환참조를 막으려고 @JsonIgnore 를 붙였었다.
+     * 이제는 모든 API 가 DTO 로만 응답하므로 엔티티가 JSON 변환(Jackson)에 대해 알 필요가 없다.
      */
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    @JsonIgnore
     private Post post;
 
     @Column(nullable = false, columnDefinition = "TEXT")

@@ -1,6 +1,6 @@
 package com.back.domain.postComment.controller;
 
-import com.back.domain.postComment.entity.PostComment;
+import com.back.domain.postComment.dto.PostCommentDto;
 import com.back.domain.postComment.service.PostCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,16 +22,19 @@ public class PostCommentController {
 
     // GET /api/v1/posts/{postId}/comments : postId 번 글의 댓글 목록
     @GetMapping
-    public List<PostComment> getItems(@PathVariable int postId) {
-        return postCommentService.findAllByPostId(postId);
+    public List<PostCommentDto> getItems(@PathVariable int postId) {
+        return postCommentService.findAllByPostId(postId)
+                .stream()
+                .map(PostCommentDto::new)
+                .toList();
     }
 
     // GET /api/v1/posts/{postId}/comments/{id} : postId 번 글의 id 번 댓글
     @GetMapping("/{id}")
-    public PostComment getItem(
+    public PostCommentDto getItem(
             @PathVariable int postId,
             @PathVariable int id
     ) {
-        return postCommentService.getComment(postId, id);
+        return new PostCommentDto(postCommentService.getComment(postId, id));
     }
 }
