@@ -1,6 +1,6 @@
 package com.back.domain.post.controller;
 
-import com.back.domain.post.entity.Post;
+import com.back.domain.post.dto.PostDto;
 import com.back.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +23,16 @@ public class PostController {
 
     // GET /api/v1/posts : 글 목록
     @GetMapping
-    public List<Post> getItems() {
-        return postService.findAll();
+    public List<PostDto> getItems() {
+        return postService.findAll()
+                .stream()
+                .map(PostDto::new) // post -> new PostDto(post) 와 같은 의미 (메서드 참조)
+                .toList();
     }
 
     // GET /api/v1/posts/{id} : 글 단건 (주소의 {id} 부분이 @PathVariable 로 들어온다)
     @GetMapping("/{id}")
-    public Post getItem(@PathVariable int id) {
-        return postService.getPost(id);
+    public PostDto getItem(@PathVariable int id) {
+        return new PostDto(postService.getPost(id));
     }
 }
