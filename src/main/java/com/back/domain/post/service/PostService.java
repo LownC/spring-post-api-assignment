@@ -46,4 +46,16 @@ public class PostService {
                         "%d번 글은 존재하지 않습니다.".formatted(id)
                 ));
     }
+
+    /**
+     * 글을 삭제한다.
+     * Post.comments 에 cascade = REMOVE 가 걸려 있어서, JPA가 소속 댓글을 먼저 DELETE 한 뒤 글을 DELETE 한다.
+     * (댓글을 먼저 지우지 않으면 post_comment.post_id 외래키 때문에 글을 지울 수 없다.)
+     */
+    @Transactional
+    public void delete(int id) {
+        Post post = getPost(id);
+
+        postRepository.delete(post);
+    }
 }

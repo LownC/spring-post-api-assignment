@@ -2,6 +2,7 @@ package com.back.domain.post.controller;
 
 import com.back.domain.post.dto.PostDto;
 import com.back.domain.post.service.PostService;
+import com.back.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,5 +35,19 @@ public class PostController {
     @GetMapping("/{id}")
     public PostDto getItem(@PathVariable int id) {
         return new PostDto(postService.getPost(id));
+    }
+
+    /**
+     * GET /api/v1/posts/{id}/delete : 글 삭제 (소속 댓글도 함께 삭제)
+     * 실습 편의를 위해 GET 으로 구현했다. 실제 서비스라면 DELETE /api/v1/posts/{id} 가 맞다.
+     */
+    @GetMapping("/{id}/delete")
+    public RsData<Void> delete(@PathVariable int id) {
+        postService.delete(id);
+
+        return new RsData<>(
+                "200-1",
+                "%d번 글이 삭제되었습니다.".formatted(id)
+        );
     }
 }
